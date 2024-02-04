@@ -1,0 +1,37 @@
+#! /usr/bin/env bash
+
+# the signing key on the yubikey
+
+CRYPTO_FILE=$HOME/.crypto.sh
+
+if [[ -f $CRYPTO_FILE  ]]
+then
+  source $CRYPTO_FILE
+else
+  echo "WARNING: no default $CRYPTO_FILE file"
+fi
+
+if [[ -n "$2" ]]
+then
+  KEY=$2
+else
+  KEY=$DEFAULT_SIGN_KEY
+fi
+
+if shasum -a 512 ${1} >${1}.sha512
+then
+  echo "checksum ok."
+else
+  echo "checksum of $1: FAILED!"
+  exit 1
+fi
+
+if gpg --default-key $KEY --armor --output ${1}.sig --detach-sig $1
+then
+  echo "sign ok."
+else
+  echo "sign of $1: FAILED!"
+  exit 1
+fi
+
+exit 0

@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+if shasum -c ${1}.sha512
+then
+  echo "shasum ok."
+else
+  echo "shasum FAILED!"
+fi
+
+if gpg --verify ${1}.sig ${1}
+then
+  echo "valid signature."
+else
+  echo "BAD SIGNATURE!"
+fi
+
+
