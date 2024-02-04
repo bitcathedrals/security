@@ -1,0 +1,56 @@
+#! /usr/bin/env bash
+
+CRYPTO_FILE=$HOME/.crypto.sh
+
+if [[ -f $CRYPTO_FILE  ]]
+then
+  source $CRYPTO_FILE
+else
+  echo "WARNING: no default $CRYPTO_FILE file"
+fi
+
+if [[ -n "$2" ]]
+then
+  KEY=$2
+else
+  KEY=$DEFAULT_ENCRYPTION_KEY
+fi
+
+if sign-file $1 $2
+then
+  echo "signature ok."
+else
+  echo "signature FAILED!"
+  exit 1
+fi
+
+if gpg --recipient $KEY --output ${1}.asc --encrypt --armor $1
+then
+  echo "encryption ok."
+else
+  echo "encryption FAILED!"
+  exit 1
+
+if type -P "shred"
+then
+  echo -n "shredding original file on UNIX: $1 "
+
+  if shred -u $1
+  then
+    echo "ok."
+  else
+    echo "shred FAILED! manual delete required."
+    exit 1
+  fi
+else
+  echo -n "permanently deleting original file on MacOS: $1"
+
+  if rm -P $1
+  then
+    echo "ok."
+  else
+    echo "permanent delete FAILED! manual deletion required"
+  fi
+fi
+
+exit 0

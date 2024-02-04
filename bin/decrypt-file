@@ -1,0 +1,36 @@
+#! /usr/bin/env bash
+
+if [[ -f $CRYPTO_FILE  ]]
+then
+  source $CRYPTO_FILE
+else
+  echo "WARNING: no default $CRYPTO_FILE file"
+fi
+
+if [[ -n "$2" ]]
+then
+  KEY=$2
+else
+  KEY=$DEFAULT_ENCRYPTION_KEY
+fi
+
+if gpg --default-key $KEY --decrypt ${1}.asc
+then
+  echo "decrpytion ok."
+else
+  echo "decryption of $1: FAILED!"
+  exit 1
+fi
+
+if verify-file $1 $2
+then
+  echo "verification ok."
+else
+  echo "verification of $1: FAILED!"
+  exit 1
+fi
+
+exit 0
+
+
+
