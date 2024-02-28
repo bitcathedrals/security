@@ -2,11 +2,21 @@
 
 CRYPTO_FILE=$HOME/.crypto.sh
 
+FILE=$2
+
 if [[ -f $CRYPTO_FILE  ]]
 then
   source $CRYPTO_FILE
 else
   echo "WARNING: no default $CRYPTO_FILE file"
+fi
+
+if shasum -a 512 $FILE >${FILE}.sha512
+then
+  echo "sha512 checksum generated to: ${FILE}.sha512"
+else
+  echo "Error! checksum generation for $FILE FAILED!"
+  exit 1
 fi
 
 if [[ -n "$2" ]]
@@ -16,7 +26,7 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
-if gpg --recipient $KEY --output ${1}.gpg --encrypt --armor $1
+if gpg --recipient $KEY --output ${FILE}.gpg --encrypt --armor $FILE
 then
   echo "encryption ok."
 else

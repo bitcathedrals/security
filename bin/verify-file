@@ -1,17 +1,32 @@
 #! /usr/bin/env bash
 
-if shasum -c ${1}.sha512
-then
-  echo "shasum ok."
+checksum="${1}.sha512"
+signature="${1}.sig"
+
+if [[ -f $checksum ]]
+  if shasum -c $checksum
+  then
+    echo "sha512 ok."
+  else
+    echo "sha512 FAILED!"
+    exit 1
+  fi
 else
-  echo "shasum FAILED!"
+  echo >/dev/stderr "Warning! no checksum found."
 fi
 
-if gpg --verify ${1}.sig ${1}
+if [[ -f $signature ]]
 then
-  echo "valid signature."
+  if gpg --verify $signature
+  then
+    echo "valid signature."
+    exit 0
+  else
+    echo "BAD SIGNATURE!"
+    exit 1
+  fi
 else
-  echo "BAD SIGNATURE!"
+  echo >/dev/stderr "Warning! no signature found."
 fi
 
 
