@@ -40,9 +40,9 @@ else
 
   if rm -P $1
   then
-    echo "ok."
+    echo " ok."
   else
-    echo "permanent delete FAILED! manual deletion required"
+    echo " permanent delete FAILED! manual deletion required"
   fi
 fi
 
