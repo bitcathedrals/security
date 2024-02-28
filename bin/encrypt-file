@@ -2,7 +2,7 @@
 
 CRYPTO_FILE=$HOME/.crypto.sh
 
-FILE=$2
+FILE=$1
 
 if [[ -f $CRYPTO_FILE  ]]
 then
@@ -25,7 +25,6 @@ else
   if command -v shasum >/dev/null 2>&1
   then
     shasum -a 512 $FILE >${FILE}.sha512
-
     if [[ $? -ne 0 ]]
     then
       echo "Error! shasum checksum generation for $FILE FAILED!"
