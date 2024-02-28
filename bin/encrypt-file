@@ -16,14 +16,6 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
-if sign-file $1 $2
-then
-  echo "signature ok."
-else
-  echo "signature FAILED!"
-  exit 1
-fi
-
 if gpg --recipient $KEY --output ${1}.asc --encrypt --armor $1
 then
   echo "encryption ok."
