@@ -16,12 +16,13 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
-if gpg --recipient $KEY --output ${1}.asc --encrypt --armor $1
+if gpg --recipient $KEY --output ${1}.gpg --encrypt --armor $1
 then
   echo "encryption ok."
 else
   echo "encryption FAILED!"
   exit 1
+fi
 
 if type -P "shred"
 then
