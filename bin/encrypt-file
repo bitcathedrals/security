@@ -15,26 +15,26 @@ echo "encrypt-file: generating sha512 checksum"
 
 if command -v sha512 >/dev/null 2>&1
 then
-  if sha512 $FILE >${FILE}.sha512
+  if ! sha512 $FILE >${FILE}.sha512
   then
-    echo "sha512 checksum generated to: ${FILE}.sha512"
-  else
-    echo "Error! checksum generation for $FILE FAILED!"
-    exit 1
-  fi
-elif command -v shasum >/dev/null 2>&1
-then
-  if shasum -a 512 $FILE >${FILE}.sha512
-  then
-    echo "sha512 checksum generated to: ${FILE}.sha512"
-  else
-    echo "Error! checksum generation for $FILE FAILED!"
+    echo "Error! sha512 checksum generation for $FILE FAILED!"
     exit 1
   fi
 else
-  echo "Error! no shasum program found."
-  exit 1
+  if command -v shasum >/dev/null 2>&1
+  then
+    if ! shasum -a 512 $FILE >${FILE}.sha512
+    then
+      echo "Error! shasum checksum generation for $FILE FAILED!"
+      exit 1
+    fi
+  else
+    echo "Error! no shasum program found."
+    exit 1
+  fi
 fi
+
+echo "sha512 checksum generated to: ${FILE}.sha512"
 
 if [[ -n "$2" ]]
 then
