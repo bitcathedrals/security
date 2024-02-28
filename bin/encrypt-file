@@ -11,11 +11,26 @@ else
   echo "WARNING: no default $CRYPTO_FILE file"
 fi
 
-if shasum -a 512 $FILE >${FILE}.sha512
+if command -v sha512 >/dev/null 2>&1
 then
-  echo "sha512 checksum generated to: ${FILE}.sha512"
+  if sha512 $FILE >${FILE}.sha512
+  then
+    echo "sha512 checksum generated to: ${FILE}.sha512"
+  else
+    echo "Error! checksum generation for $FILE FAILED!"
+    exit 1
+  fi
+elif command -v shasum >/dev/null 2>&1
+then
+  if shasum -a 512 $FILE >${FILE}.sha512
+  then
+    echo "sha512 checksum generated to: ${FILE}.sha512"
+  else
+    echo "Error! checksum generation for $FILE FAILED!"
+    exit 1
+  fi
 else
-  echo "Error! checksum generation for $FILE FAILED!"
+  echo "Error! no shasum program found."
   exit 1
 fi
 
