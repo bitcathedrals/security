@@ -11,6 +11,8 @@ else
   echo "WARNING: no default $CRYPTO_FILE file"
 fi
 
+echo "encrypt-file: generating sha512 checksum"
+
 if command -v sha512 >/dev/null 2>&1
 then
   if sha512 $FILE >${FILE}.sha512
@@ -41,6 +43,8 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
+echo "encrypt-file: encrypting $FILE"
+
 if gpg --recipient $KEY --output ${FILE}.gpg --encrypt --armor $FILE
 then
   echo "encryption ok."
@@ -48,6 +52,8 @@ else
   echo "encryption FAILED!"
   exit 1
 fi
+
+echo "encrypt-file: secure deleting $FILE"
 
 if type -P "shred"
 then
