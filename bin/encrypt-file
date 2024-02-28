@@ -15,7 +15,8 @@ echo "encrypt-file: generating sha512 checksum"
 
 if command -v sha512 >/dev/null 2>&1
 then
-  if ! sha512 $FILE >${FILE}.sha512
+  sha512 $FILE >${FILE}.sha512
+  if [[ $? -ne 0 ]]
   then
     echo "Error! sha512 checksum generation for $FILE FAILED!"
     exit 1
@@ -23,7 +24,9 @@ then
 else
   if command -v shasum >/dev/null 2>&1
   then
-    if ! shasum -a 512 $FILE >${FILE}.sha512
+    shasum -a 512 $FILE >${FILE}.sha512
+
+    if [[ $? -ne 0 ]]
     then
       echo "Error! shasum checksum generation for $FILE FAILED!"
       exit 1
