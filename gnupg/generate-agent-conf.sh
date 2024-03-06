@@ -27,4 +27,11 @@ function setup_pinentry {
 
 setup_pinentry
 
+pkcs11d=/usr/local/bin/gnupg-pkcs11-scd
+if [[ -x $pkcs11d ]]
+then
+  echo "scdaemon-program $pkcs11d"
+fi
+
+
 
