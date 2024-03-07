@@ -14,7 +14,7 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
-if gpg --default-key $KEY --decrypt ${1}.asc
+if gpg --default-key $KEY --decrypt ${1}.gpg
 then
   echo "decrpytion ok."
 else

@@ -2,12 +2,41 @@
 
 CRYPTO_FILE=$HOME/.crypto.sh
 
+FILE=$1
+
 if [[ -f $CRYPTO_FILE  ]]
 then
   source $CRYPTO_FILE
 else
   echo "WARNING: no default $CRYPTO_FILE file"
 fi
+
+echo "encrypt-file: generating sha512 checksum"
+
+if command -v sha512 >/dev/null 2>&1
+then
+  sha512 $FILE >${FILE}.sha512
+  if [[ $? -ne 0 ]]
+  then
+    echo "Error! sha512 checksum generation for $FILE FAILED!"
+    exit 1
+  fi
+else
+  if command -v shasum >/dev/null 2>&1
+  then
+    shasum -a 512 $FILE >${FILE}.sha512
+    if [[ $? -ne 0 ]]
+    then
+      echo "Error! shasum checksum generation for $FILE FAILED!"
+      exit 1
+    fi
+  else
+    echo "Error! no shasum program found."
+    exit 1
+  fi
+fi
+
+echo "sha512 checksum generated to: ${FILE}.sha512"
 
 if [[ -n "$2" ]]
 then
@@ -16,20 +45,17 @@ else
   KEY=$DEFAULT_ENCRYPTION_KEY
 fi
 
-if sign-file $1 $2
-then
-  echo "signature ok."
-else
-  echo "signature FAILED!"
-  exit 1
-fi
+echo "encrypt-file: encrypting $FILE"
 
-if gpg --recipient $KEY --output ${1}.asc --encrypt --armor $1
+if gpg --recipient $KEY --output ${FILE}.gpg --encrypt --armor $FILE
 then
   echo "encryption ok."
 else
   echo "encryption FAILED!"
   exit 1
+fi
+
+echo "encrypt-file: secure deleting $FILE"
 
 if type -P "shred"
 then
@@ -47,9 +73,9 @@ else
 
   if rm -P $1
   then
-    echo "ok."
+    echo " ok."
   else
-    echo "permanent delete FAILED! manual deletion required"
+    echo " permanent delete FAILED! manual deletion required"
   fi
 fi
 
